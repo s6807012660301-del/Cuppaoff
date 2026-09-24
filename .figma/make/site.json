@@ -1,0 +1,10 @@
+{
+  "description": "This web application allows users to create and customize edible coffee cups and molds, enhancing eco-friendly beverage experiences.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
