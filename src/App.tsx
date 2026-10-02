@@ -758,10 +758,29 @@ function FAQSection() {
 function WaitlistSection() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (email.trim()) setSubmitted(true)
+    setIsSubmitting(true)
+    setError('')
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.message || 'Unable to join the waitlist. Please try again.')
+
+      setSubmitted(true)
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : 'Unable to join the waitlist. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -792,7 +811,7 @@ function WaitlistSection() {
             <div className="animate-fade-up bg-[#FF9FFC]/20 border border-[#FF9FFC]/50 rounded-3xl p-8">
               <div className="text-5xl mb-4">🎉</div>
               <h3 className="font-display font-bold text-2xl text-white mb-2">You're in!</h3>
-              <p className="text-white/70">We'll be in touch when your edible cup is ready. Until then — drink well, waste nothing.</p>
+              <p className="text-white/70">We got you! We'll send you more information about your interest. Now we're moving forward together.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
@@ -807,6 +826,7 @@ function WaitlistSection() {
               <SpecularButton
                 size="lg"
                 type="submit"
+                disabled={isSubmitting}
                 baseColor="#FF9FFC"
                 lineColor="#FFFFFF"
                 tint="#FF9FFC"
@@ -815,10 +835,12 @@ function WaitlistSection() {
                 autoAnimate
                 className="w-full sm:w-auto"
               >
-                Join the Movement
+                {isSubmitting ? 'Joining...' : 'Join the Movement'}
               </SpecularButton>
             </form>
           )}
+
+          {error && <p role="alert" className="mt-4 text-sm text-[#FF9FFC]">{error}</p>}
 
           <p className="text-white/30 text-xs mt-4">No spam. Unsubscribe anytime. We hate waste of all kinds.</p>
         </div>
@@ -928,7 +950,7 @@ function Footer() {
                   <span className="text-[#5227FF]/55">Email</span>
                   <span>myatthihat@gmail.com</span>
                 </a>
-                <a href="tel:0623434599" className="flex items-center justify-between gap-4 font-bold transition-colors hover:text-[#FF9FFC]">
+                <a href="tel:0623434599" className="flex items-center justify-between gap-4  font-bold transition-colors hover:text-[#FF9FFC]">
                   <span className="text-[#5227FF]/55">Phone</span>
                   <span>0623434599</span>
                 </a>
