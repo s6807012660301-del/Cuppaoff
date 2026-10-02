@@ -35,7 +35,7 @@ react(),
       port: parseInt(process.env.PORT || '8443'),
       strictPort: true,
       proxy: {
-        '/api': 'http://localhost:3001',
+        '/api': 'http://127.0.0.1:3002',
       },
       watch: {
         usePolling: true,
